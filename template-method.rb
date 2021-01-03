@@ -39,10 +39,10 @@ def Boat < VehicleAbstract
   private
 
   def turn_on_enginge
-    p 'vzh-vzh'
+    p 'gr-gr'
   end
 
   def moving
-    p 'br-br'
+    p 'blop-blop'
   end
 end
