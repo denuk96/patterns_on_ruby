@@ -33,9 +33,10 @@ class Post
 
   def title
     @title
-  end  
+  end
 end
 
 feed = Feed.new
-post = Post.new('blbalba', 'new', feed)
-post.status=('moderated')
+post = Post.new('blbalba', 'new')
+post.add_feed(feed)
+post.status = 'moderated'
