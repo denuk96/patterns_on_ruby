@@ -1,42 +1,37 @@
-class Feed
-  # assume its belongs_to user
-  def update(post)
-    p "#{post.title} has been updated to #{post.status}"
+class Subscriber
+  def notifier
+    Proc.new { |post| p "#{post.title} updated" }
   end
 end
 
 class Post
-  attr_reader :title , :status
+  attr_accessor :title , :status, :subscribers
 
   def initialize(title, status)
     @title = title
     @status = status
-    @feeds = []
+    @subscribers = []
   end
 
   def status=(status)
     @status = status
-    notify_feeds
+    notify_subscribers
   end
 
-  def notify_feeds
-    @feeds.each { |f| f.update(self) }
+  def notify_subscribers
+    subscribers.each { |f| f.call self }
   end
 
-  def add_feed(feed)
-    @feeds << feed
+  def subscribe(notifier)
+    subscribers << notifier
   end
 
-  def status
-    @status
-  end
-
-  def title
-    @title
+  def unsubscribe(subscriber)
+    subscribers.select! { |s| s != subscriber }
   end
 end
 
-feed = Feed.new
+subscriber = Subscriber.new
 post = Post.new('blbalba', 'new')
-post.add_feed(feed)
-post.status = 'moderated'
+post.subscribe(subscriber.notifier)
+post.status = 'moderating'
