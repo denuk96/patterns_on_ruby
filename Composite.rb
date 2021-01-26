@@ -1,57 +1,47 @@
 # composite
 
-class CoffeMacking 
-  def initialize(task)
-    @task = task
-  end 
+class Item
+  attr_accessor :name, :price
 
-  def do_step(step)
-    @steps << step
+  def initialize(name, price)
+    @name, @price = name, price
   end
 end
 
-# steps
-class BoilWater < CoffeMacking
-  def initialize
-    super 'boil water'
-  end  
-end    
+class Order
+  attr_reader :sub_order, :items
 
-class GridCoffe < CoffeMacking
   def initialize
-    super 'prepare coffe'
+    @items = []
+    @sub_order = []
+  end
+
+  def add_order order
+    self if sub_order << order
+  end
+
+  def remove_order order
+    self if sub_order.remove order
+  end
+
+  def add_item item
+    self if items << item
+  end
+
+  def remove_item item
+    self if items.remove item
+  end
+
+  def summary
+    items_summary = items.map(&:price).reduce(:+) || 0
+    orders_summary = sub_order.map(&:summary).reduce(:+) || 0
+    items_summary + orders_summary
   end
 end
 
-class InjectMilk < CoffeMacking
-  def initialize
-    super 'add some milk'
-  end
-end
-
-# compositing
-
-class Esspresso < CoffeMacking
-  def initialize
-    super 'Macking Esspresso'
-    @steps = []
-    do_step(BoilWater.new)
-    do_step(GridCoffe.new)
-  end
-end 
-
-class AmericanoWithMilk < CoffeMacking
-  def initialize
-    super 'Macking Americano with milk'
-    @steps = []
-    do_step(BoilWater.new)
-    do_step(GridCoffe.new)
-    do_step(InjectMilk.new)
-  end
-end
-
-p cup_of_esspresso = Esspresso.new
-#<Esspresso:0x0000562bff9aef80 @task="Macking Esspresso", @steps=[#<BoilWater:0x0000562bff9aee90 @task="boil water">, #<GridCoffe:0x0000562bff9aee40 @task="prepare coffe">]>
-
-p cup_of_esspresso = AmericanoWithMilk.new
-#<AmericanoWithMilk:0x0000562bff9adab8 @task="Macking Americano with milk", @steps=[#<BoilWater:0x0000562bff9ad9a0 @task="boil water">, #<GridCoffe:0x0000562bff9ad8b0 @task="prepare coffe">, #<InjectMilk:0x0000562bff9ad7e8 @task="add some milk">]>
+item1 = Item.new('item 1', 5)
+item2 = Item.new('item 2', 10)
+order1 = Order.new.add_item(item1).add_item(item2)
+order2 = Order.new.add_item(item1).add_order(order1)
+p order1.summary # 15
+p order2.summary # 20
