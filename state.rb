@@ -16,7 +16,7 @@ class Post
 
   def status
     @state.status
-  end  
+  end
 end
 
 class BasicState
@@ -32,16 +32,16 @@ class NewState < BasicState
     @content.change_state(ModerateState.new(@content))
   end
 
-  def status 
+  def status
     'new'
-  end   
+  end
 end
 
 class ModerateState < BasicState
   def publish
     @content.change_state(PublisheState.new(@content))
   end
-  
+
   def status
     'moderating'
   end
@@ -50,12 +50,12 @@ end
 class PublisheState < BasicState
   def publish
     self
-  end 
-  
+  end
+
   def status
     'published'
   end
-end    
+end
 
 post = Post.new('blabla')
 post.status
